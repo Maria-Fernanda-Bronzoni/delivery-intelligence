@@ -1,0 +1,30 @@
+﻿# Ambiente virtual
+.venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+.pytest_cache/
+*.log
+
+# Cobertura de testes
+.coverage
+htmlcov/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Arquivos de ambiente e credenciais
+.env
+
+# Dados brutos e processados
+data/raw/
+data/processed/
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Backups locais
+*.bak
