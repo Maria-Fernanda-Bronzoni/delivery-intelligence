@@ -4,13 +4,13 @@ Sistema de Machine Learning para estimar o risco de atraso na entrega de pedidos
 
 ## Sobre o projeto
 
-O **Delivery Intelligence** é um projeto de Machine Learning desenvolvido com Python a partir do conjunto público de dados Brazilian E-Commerce Public Dataset by Olist.
+O Delivery Intelligence é um projeto de Machine Learning desenvolvido com Python a partir do conjunto público de dados Brazilian E-Commerce Public Dataset by Olist.
 
 O objetivo é investigar se informações disponíveis no momento da finalização do pedido podem ajudar a identificar pedidos com maior risco de atraso.
 
 O projeto contempla exploração e preparação de dados, engenharia de atributos, treinamento e avaliação de modelos, além de uma API para disponibilizar previsões.
 
-> **Importante:** o conjunto de dados representa entregas de e-commerce entre 2016 e 2018. Ele não representa operações de delivery de restaurantes ou entregas em tempo real.
+**Importante:** o conjunto de dados representa entregas de e-commerce entre 2016 e 2018. Ele não representa operações de delivery de restaurantes ou entregas em tempo real.
 
 ## Problema e definição do alvo
 
@@ -19,13 +19,13 @@ Um pedido é classificado como atrasado quando sua data efetiva de entrega ao cl
 - `is_late = 1`: pedido entregue após a data estimada.
 - `is_late = 0`: pedido entregue até a data estimada.
 
-Foram considerados pedidos com status `delivered` e com data efetiva de entrega conhecida, totalizando **96.470 pedidos**.
+Foram considerados pedidos com status `delivered` e com data efetiva de entrega conhecida, totalizando 96.470 pedidos.
 
 O cenário de previsão considerado é o momento do checkout, após a composição do carrinho. Por isso, informações que só seriam conhecidas depois da entrega não são utilizadas como atributos do modelo.
 
 ## Dados e atributos
 
-Fonte: [Brazilian E-Commerce Public Dataset by Olist — Kaggle](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce).
+**Fonte:** [Brazilian E-Commerce Public Dataset by Olist — Kaggle](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce).
 
 Os atributos utilizados incluem:
 
@@ -55,20 +55,22 @@ O desenvolvimento foi organizado nas seguintes etapas:
 7. Disponibilização do modelo por API REST.
 8. Testes automatizados da API.
 
-### Treinamento e avaliação
+## Treinamento e avaliação
 
 Foram comparados dois algoritmos:
 
 - Regressão Logística.
 - Random Forest.
 
-A Regressão Logística com balanceamento de classes foi selecionada para a versão final. O limiar de classificação de 0,6 foi escolhido com base no F1-score da classe positiva em uma validação temporal realizada dentro dos dados de treinamento.
+A Regressão Logística com balanceamento de classes foi selecionada para a versão final.
+
+O limiar de classificação de 0,6 foi escolhido com base no F1-score da classe positiva em uma validação temporal realizada dentro dos dados de treinamento.
 
 O pré-processamento utiliza:
 
 - `StandardScaler` para atributos numéricos.
 - `OneHotEncoder` para o estado do cliente.
-- `Pipeline` do Scikit-learn para integrar pré-processamento e modelo.
+- Pipeline do Scikit-learn para integrar pré-processamento e modelo.
 
 A divisão dos dados foi cronológica, mantendo os pedidos mais recentes para teste:
 
@@ -81,29 +83,32 @@ A diferença entre as taxas de atraso evidencia uma mudança na distribuição t
 
 ## Resultados
 
-Avaliação do modelo final no conjunto de teste:
+Avaliação do modelo final no conjunto de teste, utilizando o limiar de classificação de 0,6:
 
-| Métrica — classe atrasado | Resultado |
+| Métrica | Resultado |
 |---|---:|
-| Precisão (Precision) | 0,10 |
-| Revocação (Recall) | 0,52 |
-| F1-score | 0,17 |
+| Precisão (Precision) — classe atrasado | 0,10 |
+| Revocação (Recall) — classe atrasado | 0,52 |
+| F1-score — classe atrasado | 0,17 |
 | Acurácia geral | 0,73 |
+| ROC-AUC | 0,72 |
 
-Matriz de confusão:
+### Matriz de confusão
 
 | | Previsto: não atrasado | Previsto: atrasado |
 |---|---:|---:|
 | Real: não atrasado | 13.564 | 4.709 |
 | Real: atrasado | 494 | 527 |
 
-O modelo identificou aproximadamente **52% dos pedidos atrasados** no conjunto de teste. Entretanto, sua precisão foi baixa: apenas cerca de 10% das previsões positivas correspondiam a pedidos realmente atrasados.
+O modelo identificou aproximadamente 52% dos pedidos atrasados no conjunto de teste. Entretanto, sua precisão foi baixa: apenas cerca de 10% das previsões positivas correspondiam a pedidos realmente atrasados.
 
 Isso significa que o modelo consegue sinalizar parte dos pedidos que atrasariam, mas também gera muitos falsos positivos.
 
 O F1-score caiu de aproximadamente 0,275 na validação para 0,17 no teste. Essa diferença reforça a necessidade de avaliar a generalização temporal e investigar mudanças na distribuição dos dados.
 
-**Os resultados são experimentais. O modelo não deve ser considerado pronto para uso em produção.**
+O ROC-AUC de aproximadamente 0,72 indica que o modelo apresenta capacidade de discriminação entre as classes superior à de uma classificação aleatória, embora ainda tenha limitações.
+
+Os resultados são experimentais. O modelo não deve ser considerado pronto para uso em produção.
 
 ## API REST
 
@@ -146,7 +151,7 @@ delivery-intelligence/
 │   ├── configuracao.pkl
 │   └── modelo_atraso.pkl
 ├── notebooks/
-│   └── 01_exploracao_dados.ipynb
+│   └── 01_exploracao_e_modelagem.ipynb
 ├── src/
 │   └── api/
 │       └── main.py
@@ -165,7 +170,7 @@ delivery-intelligence/
 ### 1. Clonar o repositório
 
 ```bash
-git clone <URL_DO_REPOSITORIO>
+git clone https://github.com/Maria-Fernanda-Bronzoni/delivery-intelligence.git
 cd delivery-intelligence
 ```
 
@@ -180,13 +185,13 @@ python -m venv .venv
 
 ### 3. Instalar as dependências
 
-```powershell
+```bash
 python -m pip install -r requirements.txt
 ```
 
 ### 4. Executar a API
 
-```powershell
+```bash
 python -m uvicorn src.api.main:app --reload
 ```
 
@@ -202,7 +207,7 @@ Os arquivos do modelo já estão incluídos no repositório, portanto a API pode
 
 ### 5. Executar os testes
 
-```powershell
+```bash
 python -m pytest tests/ -v
 ```
 
@@ -224,4 +229,4 @@ Possíveis evoluções incluem avaliação com dados mais recentes, calibração
 
 ---
 
-**Projeto de portfólio — Machine Learning e desenvolvimento de APIs com Python.**
+Projeto de portfólio — Machine Learning e desenvolvimento de APIs com Python.
